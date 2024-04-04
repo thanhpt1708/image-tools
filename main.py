@@ -9,13 +9,15 @@ def resize_and_compress_images(
         os.makedirs(output_folder)
 
     for filename in os.listdir(input_folder):
-        if filename.endswith(
-            (".png", ".PNG", ".jpg", ".JPG", ".JPEG", ".jpeg", ".WEBP", ".webp")
-        ):
+        _, ext = os.path.splitext(filename)
+        ext = ext.lower()
+        if ext in (".png", ".jpg", ".jpeg", ".webp"):
             input_path = os.path.join(input_folder, filename)
-            output_path = os.path.join(output_folder, filename)
+            output_file_name = os.path.splitext(filename)[0] + ".jpg"
+            output_path = os.path.join(output_folder, output_file_name)
             with Image.open(input_path) as img:
                 output_quality = 85
+                img = img.convert("RGB")
 
                 # Calculate height while keeping aspect ratio
                 ratio = target_width / float(img.size[0])
@@ -39,11 +41,14 @@ def resize_and_compress_images(
                 print(f"Processed: {output_path}")
 
 
-if __name__ == "__main__":
-    # Example usage
+def main() -> None:
     input_folder = os.getcwd()
     output_folder = "output_images"
     target_width = 1600
     max_file_size = 200 * 1024  # 200KB
 
     resize_and_compress_images(input_folder, output_folder, target_width, max_file_size)
+
+
+if __name__ == "__main__":
+    main()
